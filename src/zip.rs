@@ -2,20 +2,24 @@ use std::fs::File;
 use std::path::{Path};
 use std::{fs, io};
 use zip::ZipArchive;
+use std::io::{BufReader, copy};
+use std::time::Instant;
+use flate2::write::GzEncoder;
+use flate2::Compression;
 
-pub struct Unzip;
-
-impl Unzip {
+pub struct Decompress;
+pub struct Compress;
+impl Decompress {
     ///
     /// unzip file from a file path in the format of &str
     ///
     /// # Example
     ///
     /// ```
-    ///use simple_zip::unzip::Unzip;
+    ///use simple_zip::zip::Decompress;
     ///
     ///let path = "./a.zip";
-    ///Unzip::local_str(&path);
+    ///Decompress::local_str(&path);
     /// ```
     ///
     pub fn local_str(filepath: &str) {
@@ -69,11 +73,11 @@ impl Unzip {
     ///
     /// ```
     ///use std::path::Path;
-    /// use simple_zip::unzip::Unzip;
+    ///use simple_zip::zip::Decompress;
     ///
     ///let path = "./a.zip";
     ///let pathbuf = Path::new(&path);
-    ///Unzip::local_buffer(&pathbuf);
+    ///Decompress::local_buffer(&pathbuf);
     /// ```
     ///
 
@@ -118,5 +122,28 @@ impl Unzip {
                 }
             }
         }
+    }
+}
+
+impl Compress {
+
+
+
+    pub fn zip(path: &Path, output: &Path) {
+        let mut input = BufReader::new(File::open(path).unwrap());
+        let output = File::create(output).unwrap();
+        let mut encoder = GzEncoder::new(output, Compression::default());
+
+        let start = Instant::now();
+        copy(&mut input, &mut encoder).unwrap();
+        let output = encoder.finish().unwrap();
+
+        println!(
+            "Source len: {:?}",
+            input.get_ref().metadata().unwrap().len()
+        );
+
+        println!("Target len: {:?}", output.metadata().unwrap().len());
+        println!("Elapsed: {:?}", start.elapsed());
     }
 }

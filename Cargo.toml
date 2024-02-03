@@ -8,6 +8,13 @@ edition = "2021"
 license =  "MIT"
 description = "A library for working with compressed files"
 authors = ["Gustavo Mendonça, <https://github.com/swxtz>"]
+repository = "https://github.com/swxtz/simple-zip"
+
+[features]
+default = ["zip"]
+zip = []
 
 [dependencies]
 zip = { version = "0.6.6" }
+tempfile = "3.9.0"
+flate2 = "1.0.28"

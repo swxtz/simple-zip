@@ -1,1 +1,2 @@
-pub mod unzip;
+#[cfg(feature = "zip")]
+pub mod zip;
