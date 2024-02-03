@@ -1,11 +1,23 @@
-use std::{fs, io};
 use std::fs::File;
 use std::path::{Path, PathBuf};
+use std::{fs, io};
 use zip::ZipArchive;
 
 pub struct Unzip;
 
 impl Unzip {
+    ///
+    /// unzip file from a file path in the format of &str
+    ///
+    /// # Example
+    ///
+    /// ```
+    ///use simple_zip::unzip::Unzip;
+    ///
+    ///let path = "./a.zip";
+    ///Unzip::local_str(&path);
+    /// ```
+    ///
     pub fn local_str(filepath: &str) {
         let filename = Path::new(filepath);
         let file = File::open(&filename).unwrap();
@@ -27,15 +39,8 @@ impl Unzip {
             }
 
             if (*file.name()).ends_with("/") {
-                println!("File {} extracted to {}", i, outpath.display());
                 fs::create_dir_all(&outpath).unwrap();
             } else {
-                println!(
-                    "File {} extracted to \"{}\" ({} bytes)",
-                    i,
-                    outpath.display(),
-                    file.size()
-                );
                 if let Some(p) = outpath.parent() {
                     if !p.exists() {
                         fs::create_dir_all(&p).unwrap();
@@ -54,13 +59,25 @@ impl Unzip {
                     fs::set_permissions(&outpath, fs::Permissions::from_mode(mode)).unwrap();
                 }
             }
-
-
         }
     }
 
-    pub fn local_buffer(filepath: PathBuf) {
+    ///
+    /// unzip file from a PathBuffer
+    ///
+    /// # Example
+    ///
+    /// ```
+    ///use std::path::Path;
+    /// use simple_zip::unzip::Unzip;
+    ///
+    ///let path = "./a.zip";
+    ///let pathbuf = Path::new(&path);
+    ///Unzip::local_buffer(&pathbuf);
+    /// ```
+    ///
 
+    pub fn local_buffer(filepath: &Path) {
         let file = File::open(&filepath).unwrap();
         let mut archive = ZipArchive::new(file).unwrap();
 
@@ -80,15 +97,8 @@ impl Unzip {
             }
 
             if (*file.name()).ends_with("/") {
-                println!("File {} extracted to {}", i, outpath.display());
                 fs::create_dir_all(&outpath).unwrap();
             } else {
-                println!(
-                    "File {} extracted to \"{}\" ({} bytes)",
-                    i,
-                    outpath.display(),
-                    file.size()
-                );
                 if let Some(p) = outpath.parent() {
                     if !p.exists() {
                         fs::create_dir_all(&p).unwrap();
@@ -107,9 +117,6 @@ impl Unzip {
                     fs::set_permissions(&outpath, fs::Permissions::from_mode(mode)).unwrap();
                 }
             }
-
-
         }
     }
 }
-

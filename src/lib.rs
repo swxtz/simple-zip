@@ -1,4 +1,1 @@
-use crate::unzip::Unzip;
-
-mod unzip;
-
+pub mod unzip;
